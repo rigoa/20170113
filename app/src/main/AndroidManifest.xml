@@ -8,13 +8,37 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.rigo.noo.UserActivity"
+            android:label="@string/activity_name_user" >
+        </activity>
+        <activity
+            android:name="com.rigo.noo.HistoryActivity"
+            android:label="@string/activity_name_history" >
+        </activity>
+
+        <service
+            android:name="com.rigo.noo.service.MiniService"
+            android:enabled="true" >
+        </service>
+
+
     </application>
+
+    //MiniService
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    //Location
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 </manifest>
