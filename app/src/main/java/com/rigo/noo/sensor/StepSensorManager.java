@@ -70,7 +70,7 @@ public class StepSensorManager implements SensorEventListener {
     private float lastY;
     private float lastZ;
     private float x, y, z;
-    private static final int SHAKE_THRESHOLD = 800;
+    private static final int SHAKE_THRESHOLD = 100;
 
     private Context mContext;
     private SensorManager mSensorManager;
@@ -85,6 +85,7 @@ public class StepSensorManager implements SensorEventListener {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
             accelerormeterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         else {
+            //accelerormeterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             accelerormeterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         }
 
@@ -132,26 +133,23 @@ public class StepSensorManager implements SensorEventListener {
         // TODO Auto-generated method stub
         AppLog.i(TAG, "onSensorChanged_start Type : " + event.sensor.getType());
 
-        if(mSensorCallback != null)
-            mSensorCallback.CallbackFunction();
-        else
-            AppLog.i(TAG, "onSensorChanged mSensorCallback is null");
-
-        //Sensor.TYPE_STEP_COUNTER
-
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             long currentTime = System.currentTimeMillis();
             long gabOfTime = (currentTime - lastTime);
-            if (gabOfTime > 100) {
+            if (gabOfTime > 500) {
                 lastTime = currentTime;
                 x = event.values[SensorManager.DATA_X];
                 y = event.values[SensorManager.DATA_Y];
                 z = event.values[SensorManager.DATA_Z];
 
-                speed = Math.abs(x + y + z - lastX - lastY - lastZ) / gabOfTime * 10000;
+                speed = Math.abs(x + y + z - lastX - lastY - lastZ) / gabOfTime * 20000;
 
                 if (speed > SHAKE_THRESHOLD) {
                     // count process
+                    if(mSensorCallback != null)
+                        mSensorCallback.CallbackFunction();
+                    else
+                        AppLog.i(TAG, "onSensorChanged mSensorCallback is null");
                 }
 
                 lastX = event.values[SensorManager.DATA_X];
@@ -162,6 +160,10 @@ public class StepSensorManager implements SensorEventListener {
         else if(event.sensor.getType() == Sensor.TYPE_STEP_COUNTER)
         {
             // count process
+            if(mSensorCallback != null)
+                mSensorCallback.CallbackFunction();
+            else
+                AppLog.i(TAG, "onSensorChanged mSensorCallback is null");
         }
 
     }
