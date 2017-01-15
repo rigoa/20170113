@@ -70,7 +70,7 @@ public class StepSensorManager implements SensorEventListener {
     private float lastY;
     private float lastZ;
     private float x, y, z;
-    private static final int SHAKE_THRESHOLD = 200;
+    private static final int SHAKE_THRESHOLD = 150;
 
     private Context mContext;
     private SensorManager mSensorManager;
@@ -136,7 +136,7 @@ public class StepSensorManager implements SensorEventListener {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             long currentTime = System.currentTimeMillis();
             long gabOfTime = (currentTime - lastTime);
-            if (gabOfTime > 300) {
+            if (gabOfTime > 400) {
                 lastTime = currentTime;
                 x = event.values[SensorManager.DATA_X];
                 y = event.values[SensorManager.DATA_Y];

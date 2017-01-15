@@ -21,6 +21,7 @@ import com.rigo.noo.sensor.StepSensorManager;
 import com.rigo.noo.util.AppLog;
 import com.rigo.noo.util.AppUtil;
 
+
 /**
  * Created by kbg82 on 2017-01-13.
  */
@@ -38,9 +39,9 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     private long mStepValue;
 
     //Location
-    private double mLatitude;
-    private double mLongitude;
     private String mLocation;
+
+    private int mPermisionLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +58,17 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     public void InitAdress()
     {
         AppLog.i(TAG, "InitAdress_start");
-        mTvLocation.setText(mLocation);
 
         LocationManager locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
 
-        if ( Build.VERSION.SDK_INT >= 23 &&
+        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             //requestPermissions();
 
+            mLocation = getString(R.string.activity_location_reject);
+            mTvLocation.setText(mLocation);
             AppLog.i(TAG, "InitAdress not have permission");
             return  ;
         }
@@ -89,6 +91,8 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         mTvDistance = (TextView)findViewById(R.id.tvDistance);
         mTvLocation = (TextView)findViewById(R.id.tvLoaction);
         mBtAction = (Button)findViewById(R.id.btAction);
+
+        mTvLocation.setText(mLocation);
 
         mBtAction.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,6 +202,15 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     protected void onResume() {
         super.onResume();
         AppLog.i(TAG, "onResume");
+        mPermisionLocation = getIntent().getIntExtra(ApplicationDefine.PERMITION_INTENT_ID_LOCATION, PackageManager.PERMISSION_DENIED);
+        if( mPermisionLocation == PackageManager.PERMISSION_GRANTED) {
+            AppLog.i(TAG, "onResume Location PERMISSION_GRANTED");
+            InitAdress();
+        }
+        else{
+            AppLog.i(TAG, "onResume Location PERMISSION_DENIED");
+        }
+
     }
 
     @Override
@@ -227,7 +240,7 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         AppLog.i(TAG, "onLocationChanged");
 
         double nLongitude = location.getLongitude();
-        double nLatitude = location.getLongitude();
+        double nLatitude = location.getLatitude();
 
         if(location != null)
             if( nLongitude == 0 || nLatitude == 0) {
@@ -306,7 +319,7 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         protected Void doInBackground(Void... voids) {
             AppLog.i(TAG, "doInBackground");
             NAPI pNAPI = new NAPI();
-            mTaskLocation = pNAPI.getAdress(mLongitude, mLatitude);
+            mTaskLocation = pNAPI.getAdress(mTaskLongitude, mTaskLatitude);
             AppLog.i(TAG, "mTaskLocation : " + mTaskLocation);
             return null;
         }

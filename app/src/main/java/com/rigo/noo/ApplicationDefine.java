@@ -11,4 +11,8 @@ public interface ApplicationDefine {
     final String NAVER_CLIENT_SECRET  = "gKfqpq82KI";
     final float STEP_METER = (float)0.6;
     final int  APP_NOO_NOTIFICATION_ID  = 9999;
+
+
+    final int PERMITION_RESULT_ID_LOCATION = 10;
+    final String PERMITION_INTENT_ID_LOCATION = "permition_granted";
 }
