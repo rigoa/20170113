@@ -203,7 +203,6 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
 
         //Need Process location permission alert check
         if( MainActivity.GetPermissionState() == ApplicationDefine.MAIN_PERMISSION_DENIED) {
-            //Need N Test
             mLocation = getString(R.string.activity_location_reject);
             mTvLocation.setText(mLocation);
         }
