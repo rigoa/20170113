@@ -172,10 +172,10 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         mTvStepCount.setText("0");
 
         //Process Calc Distance
-        mTvDistance.setText( AppUtil.DistanceFormat(mStepValue, ApplicationDefine.STEP_METER) );
+        mTvDistance.setText( AppUtil.DistanceFormat(mStepValue, (float)0.6) );
 
         NormalItem pNormalItem = new NormalItem();
-        pNormalItem.setDistance(ApplicationDefine.STEP_METER);
+        pNormalItem.setDistance((float)0.6);
         NormalItemDBManager.getInstance(getApplicationContext()).addRunItemToDB(pNormalItem);
         StepSensorManager.getInstance(getApplicationContext()).Start();
 
@@ -226,8 +226,17 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     public void onLocationChanged(Location location) {
         AppLog.i(TAG, "onLocationChanged");
 
+        double nLongitude = location.getLongitude();
+        double nLatitude = location.getLongitude();
+
         if(location != null)
-            new UpdateTask(location.getLongitude(), location.getLatitude()).execute();
+            if( nLongitude == 0 || nLatitude == 0) {
+                AppLog.d(TAG, "nLongitude nLatitude is 0");
+            }
+            else
+            {
+                new UpdateTask(nLongitude, nLatitude).execute();
+            }
         else
             AppLog.d(TAG, "onLocationChanged Location is null");
     }
@@ -270,8 +279,15 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            AppLog.i(TAG, "onPostExecute");
-            mTvLocation.setText(mTaskLocation);
+            AppLog.i(TAG, "onPostExecute mTaskLocation : " + mTaskLocation);
+
+            if(mTaskLocation == null || mTaskLocation.isEmpty()) {
+                //process empty location
+            }
+            else
+            {
+                mTvLocation.setText(mTaskLocation);
+            }
         }
 
         @Override
