@@ -131,7 +131,7 @@ public class MiniService extends Service{
         mStepSensorManager.SetSensorCallback(mSensorCallback);
         StepSensorManager.getInstance(getApplicationContext()).Start();
 
-        startForeground(1,  new Notification());
+        startForeground(ApplicationDefine.APP_NOO_NOTIFICATION_ID,  new Notification());
         //return super.onStartCommand(intent, flags, startId);
         return START_STICKY;
     }

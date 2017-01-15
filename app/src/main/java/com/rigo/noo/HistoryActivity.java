@@ -37,8 +37,8 @@ public class HistoryActivity extends Activity{
         //make list sample
         ArrayList<NormalItem> nList = new ArrayList<NormalItem>();
         NormalItemDBManager.getInstance(getApplicationContext()).getAllNormalItem(nList);
-        for(int i =1; i < 5; i++) {
-            nList.add(new NormalItem("2016-01-0" + i, (float) 0.6, 15));
+        for(int i =1; i < 25; i++) {
+            nList.add(new NormalItem("2016-01-0" + i, ApplicationDefine.STEP_METER, 15000));
         }
         mItemArrayAdapter = new ItemArrayAdapter(this, R.layout.item_noraml, nList);
         mListView.setAdapter(mItemArrayAdapter);
