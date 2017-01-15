@@ -126,7 +126,7 @@ public class StepSensorManager implements SensorEventListener {
     private float lastY;
     private float lastZ;
     private float x, y, z;
-    private static final int SHAKE_THRESHOLD = 140;
+    private static final int SHAKE_THRESHOLD = 120;
 
     @Override
     public void onSensorChanged(SensorEvent event) {
