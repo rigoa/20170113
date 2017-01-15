@@ -13,6 +13,7 @@ import com.rigo.noo.util.AppLog;
 
 /**
  * Created by kbg82 on 2017-01-15.
+ * Just Read Support
  */
 
 public class NooProvider extends ContentProvider {

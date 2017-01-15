@@ -17,8 +17,8 @@ import java.util.Collections;
  */
 
 public class HistoryActivity extends Activity{
-
     private static String TAG = HistoryActivity.class.getSimpleName();
+
     private ListView mListView;
     private ItemArrayAdapter mItemArrayAdapter;
 
@@ -26,9 +26,7 @@ public class HistoryActivity extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-
         mListView = (ListView)findViewById(R.id.lvItem);
-
     }
 
     public void makeItemList()
@@ -37,9 +35,10 @@ public class HistoryActivity extends Activity{
         //make list sample
         ArrayList<NormalItem> nList = new ArrayList<NormalItem>();
         NormalItemDBManager.getInstance(this).getAllNormalItem(nList);
-        for(int i =1; i < 25; i++) {
-            nList.add(new NormalItem("2016-01-0" + i, ApplicationDefine.STEP_METER, 15000));
-        }
+        //Test List View Code
+//        for(int i =1; i < 5; i++) {
+//            nList.add(new NormalItem("2016-01-0" + i, ApplicationDefine.STEP_METER, 15000));
+//        }
 
         Collections.sort(nList);
 

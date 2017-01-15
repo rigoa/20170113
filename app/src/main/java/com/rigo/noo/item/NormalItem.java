@@ -17,7 +17,6 @@ public class NormalItem implements Comparable<NormalItem>{
 
     public NormalItem(){
         mID = -1;
-
         Calendar pCalendar = Calendar.getInstance();
         Date pDate = pCalendar.getTime();
         String sDate = new SimpleDateFormat("yyyy-MM-dd").format(pDate);
@@ -71,7 +70,7 @@ public class NormalItem implements Comparable<NormalItem>{
     @Override
     public int compareTo(NormalItem another) {
         // TODO Auto-generated method stub
-
+        //Process Sort Oder
         return this.getStartTime().compareTo( another.getStartTime());
     }
 }

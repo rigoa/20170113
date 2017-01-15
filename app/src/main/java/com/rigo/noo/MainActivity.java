@@ -25,6 +25,8 @@ public class MainActivity extends ActivityGroup {
     private final int ACCESS_FINE_LOCATION_INDEX = 0;
     private final int ACCESS_COARSE_LOCATION_INDEX = 1;
 
+    private static int mIsPermission = ApplicationDefine.MAIN_PERMISSION_WAIT;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +37,8 @@ public class MainActivity extends ActivityGroup {
 
         mTabHost.addTab( mTabHost.newTabSpec("A").setIndicator(getResources().getString(R.string.activity_name_user)).setContent(new Intent(this, UserActivity.class)));
         mTabHost.addTab( mTabHost.newTabSpec("B").setIndicator(getResources().getString(R.string.activity_name_history)).setContent(new Intent(this, HistoryActivity.class)));
+
+        mIsPermission = ApplicationDefine.MAIN_PERMISSION_WAIT;
     }
 
     public  void getLocationPermition() {
@@ -55,20 +59,20 @@ public class MainActivity extends ActivityGroup {
         switch (requestCode)
         {
             case ApplicationDefine.PERMITION_RESULT_ID_LOCATION: {
-                AppLog.i(TAG, "onRequestPermissionsResult PERMISSION_GRANTED");
-
                 if( grantResults[ACCESS_FINE_LOCATION_INDEX] ==  PackageManager.PERMISSION_GRANTED
-                        &&  grantResults[ACCESS_COARSE_LOCATION_INDEX] ==  PackageManager.PERMISSION_GRANTED ) {
+                        &&  grantResults[ACCESS_COARSE_LOCATION_INDEX] ==  PackageManager.PERMISSION_DENIED ) {
                     //process PERMISSION_GRANTED
-
+                    AppLog.i(TAG, "onRequestPermissionsResult PERMISSION_GRANTED");
+                    mIsPermission = ApplicationDefine.MAIN_PERMISSION_GRANTED;
                 }
                 else {
                     //process PERMISSION_DENIED
-
+                    AppLog.i(TAG, "onRequestPermissionsResult PERMISSION_GRANTED");
+                    mIsPermission = ApplicationDefine.MAIN_PERMISSION_DENIED;
                 }
-
-
             }
+                break;
+            default:
                 break;
         }
     }
@@ -86,10 +90,19 @@ public class MainActivity extends ActivityGroup {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        getLocationPermition();
+    }
+
+    @Override
     protected void onResume() {
+        //Process End MiniService
         stopService(new Intent(this, MiniService.class));
         super.onResume();
-        getLocationPermition();
+    }
 
+    public static int GetPermissionState() {
+        return mIsPermission;
     }
 }

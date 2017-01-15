@@ -17,19 +17,19 @@ public class NormalItemDBManager {
     private volatile static NormalItemDBManager mNormalItemDBManager	= null;
     private NormalItemDBAPI mNormalItemDBAPI = null;
 
-    public static NormalItemDBManager getInstance(Context context) {
+    public static NormalItemDBManager getInstance(Context aContext) {
         if (mNormalItemDBManager == null) {
             synchronized (NormalItemDBManager.class) {
                 if (mNormalItemDBManager == null) {
-                    mNormalItemDBManager = new NormalItemDBManager(context);
+                    mNormalItemDBManager = new NormalItemDBManager(aContext);
                 }
             }
         }
         return mNormalItemDBManager;
     }
 
-    private NormalItemDBManager(Context context) {
-        mNormalItemDBAPI = new NormalItemDBAPI(context);
+    private NormalItemDBManager(Context aContext) {
+        mNormalItemDBAPI = new NormalItemDBAPI(aContext);
     }
 
     public boolean isEmpty() {

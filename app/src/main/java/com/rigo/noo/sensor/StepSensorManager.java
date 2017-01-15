@@ -21,27 +21,17 @@ public class StepSensorManager implements SensorEventListener {
     private volatile static  StepSensorManager mStepSensorManager = null;
     private volatile boolean mIsSensorStart;
 
+    private Context mContext;
+    private SensorManager mSensorManager;
+    private Sensor accelerormeterSensor;
+
+    //Receive Callback Interface UserActivity and MiniService
     private SensorCallback mSensorCallback;
-
-
-
-    public static StepSensorManager getInstance(Context context) {
-        if (mStepSensorManager == null) {
-            synchronized (StepSensorManager.class) {
-                if (mStepSensorManager == null) {
-                    mStepSensorManager = new StepSensorManager(context);
-                }
-            }
-        }
-        return mStepSensorManager;
-    }
-
     public interface  SensorCallback {
         public void CallbackFunction();
     }
 
     public void SetSensorCallback( SensorCallback aSensorCallback) {
-
         if(aSensorCallback == null) {
             AppLog.i(TAG, "setSensorCallback aSensorCallback : null");
         }
@@ -63,30 +53,31 @@ public class StepSensorManager implements SensorEventListener {
                 AppLog.i(TAG, "unsetSensorCallback aSensorCallback : null");
         }
     }
+    //Receive Callback Interface UserActivity and MiniService
 
-    private long lastTime;
-    private float speed;
-    private float lastX;
-    private float lastY;
-    private float lastZ;
-    private float x, y, z;
-    private static final int SHAKE_THRESHOLD = 150;
-
-    private Context mContext;
-    private SensorManager mSensorManager;
-    private Sensor accelerormeterSensor;
-
-
+    //Singleton
+    public static StepSensorManager getInstance(Context context) {
+        if (mStepSensorManager == null) {
+            synchronized (StepSensorManager.class) {
+                if (mStepSensorManager == null) {
+                    mStepSensorManager = new StepSensorManager(context);
+                }
+            }
+        }
+        return mStepSensorManager;
+    }
 
     public StepSensorManager(Context aContext) {
         mContext = aContext;
         mSensorManager = (SensorManager) aContext.getSystemService(Context.SENSOR_SERVICE);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH) {
+            //User Custom TYPE_ACCELEROMETER
             accelerormeterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        }
         else {
-            accelerormeterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            //accelerormeterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+            //Support after KITKAT_WATCH
+            accelerormeterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         }
 
     }
@@ -100,6 +91,7 @@ public class StepSensorManager implements SensorEventListener {
         else
         {
             //error process
+            AppLog.i(TAG, "Start accelerormeterSensor is null");
         }
     }
 
@@ -112,6 +104,7 @@ public class StepSensorManager implements SensorEventListener {
         else
         {
             //error process
+            AppLog.i(TAG, "Start mSensorManager is null");
         }
     }
 
@@ -125,18 +118,25 @@ public class StepSensorManager implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // TODO Auto-generated method stub
         AppLog.i(TAG, "onAccuracyChanged_accuracy : " + accuracy);
-
     }
+
+    //Process Calc StepCount
+    private long lastTime;
+    private float speed;
+    private float lastX;
+    private float lastY;
+    private float lastZ;
+    private float x, y, z;
+    private static final int SHAKE_THRESHOLD = 140;
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         // TODO Auto-generated method stub
-//        AppLog.i(TAG, "onSensorChanged_start Type : " + event.sensor.getType());
 
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             long currentTime = System.currentTimeMillis();
             long gabOfTime = (currentTime - lastTime);
-            if (gabOfTime > 400) {
+            if (gabOfTime > 350) {
                 lastTime = currentTime;
                 x = event.values[SensorManager.DATA_X];
                 y = event.values[SensorManager.DATA_Y];

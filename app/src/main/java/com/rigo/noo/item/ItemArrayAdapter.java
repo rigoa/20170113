@@ -38,26 +38,26 @@ public class ItemArrayAdapter  extends ArrayAdapter<NormalItem> {
     public View getView(int position, View convertView, ViewGroup parent) {
         // TODO Auto-generated method stub
 
-        View nView = convertView;
-        if (nView == null) {
+        View pView = convertView;
+        if (pView == null) {
             LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            nView = vi.inflate(mLayoutID, null);
+            pView = vi.inflate(mLayoutID, null);
         }
 
         final NormalItem pNormalItem = mItemList.get(position);
+
         if(pNormalItem != null)
         {
-            TextView tvTitle = (TextView) nView.findViewById(R.id.tvHistoryDate);
+            TextView tvTitle = (TextView) pView.findViewById(R.id.tvHistoryDate);
             tvTitle.setText(pNormalItem.getStartTime());
 
-            TextView tvDate = (TextView) nView.findViewById(R.id.tvHistoryStep);
+            TextView tvDate = (TextView) pView.findViewById(R.id.tvHistoryStep);
             tvDate.setText(pNormalItem.getData()+"");
 
-            TextView tvSize = (TextView) nView.findViewById(R.id.tvHistoryDistance);
+            TextView tvSize = (TextView) pView.findViewById(R.id.tvHistoryDistance);
             tvSize.setText( AppUtil.DistanceFormat(pNormalItem.getData(), pNormalItem.getDistance()) );
 
         }
-
-        return nView;
+        return pView;
     }
 }

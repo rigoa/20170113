@@ -48,13 +48,12 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
         mLocation = getResources().getString(R.string.activity_location_wait);
-
         InitLayout();
         StartAdress();
-
     }
 
 
+    //get Location from GPS, Network
     public void StartAdress()
     {
         AppLog.i(TAG, "InitAdress_start");
@@ -65,8 +64,6 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
                 ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-//            mLocation = getString(R.string.activity_location_reject);
-//            mTvLocation.setText(mLocation);
             AppLog.i(TAG, "InitAdress not have permission");
             return;
         }
@@ -78,6 +75,10 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
 
         Log.d(TAG, "isGPSEnabled=" + isGPSEnabled);
         Log.d(TAG, "isNetworkEnabled=" + isNetworkEnabled);
+
+        //Process Need Gps and Mobile State
+
+
 
         locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, this);
         locationManager.requestLocationUpdates( LocationManager.NETWORK_PROVIDER, 0, 0, this);
@@ -107,6 +108,7 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         });
     }
 
+    //Current State update from DB
     public void UpdateUI() {
         //Process Get Save StepValue
         NormalItem pNormalItem;
@@ -125,15 +127,14 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
             mBtAction.setTag(0);
             mStepValue = 0;
             mBtAction.setText(R.string.button_start);
-
         }
         AppLog.i(TAG, "InitLayout mStepValue : " + mStepValue);
 
         mTvStepCount.setText(mStepValue+"");
         mTvDistance.setText(AppUtil.DistanceFormat( mStepValue, ApplicationDefine.STEP_METER));
-
     }
 
+    //Use Senser Callback
     public void updateStep()
     {
         mStepValue++;
@@ -174,15 +175,14 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         mTvStepCount.setText("0");
 
         //Process Calc Distance
-        mTvDistance.setText( AppUtil.DistanceFormat(mStepValue, (float)0.6) );
+        mTvDistance.setText( AppUtil.DistanceFormat(mStepValue, ApplicationDefine.STEP_METER) );
 
         NormalItem pNormalItem = new NormalItem();
-        pNormalItem.setDistance((float)0.6);
+        pNormalItem.setDistance(ApplicationDefine.STEP_METER);
         NormalItemDBManager.getInstance(this).addRunItemToDB(pNormalItem);
         StepSensorManager.getInstance(this).Start();
 
     }
-
 
     @Override
     public void CallbackFunction() {
@@ -201,12 +201,20 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         super.onResume();
         AppLog.i(TAG, "onResume");
         StartAdress();
+
+        //Need Process location permission alert check
+        if( MainActivity.GetPermissionState() == ApplicationDefine.MAIN_PERMISSION_DENIED) {
+            //Need N Test
+            mLocation = getString(R.string.activity_location_reject);
+            mTvLocation.setText(mLocation);
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         AppLog.i(TAG, "onStart");
+        //Register Senser Callback
         StepSensorManager.getInstance(this).SetSensorCallback(this);
         UpdateUI();
     }
@@ -221,15 +229,9 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     protected void onStop() {
         super.onStop();
         AppLog.i(TAG, "onStop");
-
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    //Location Process
+    //Process Location Listener
     @Override
     public void onLocationChanged(Location location) {
         AppLog.i(TAG, "onLocationChanged");
@@ -264,6 +266,7 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
 
     }
 
+    //Use Location Address update.
     private  class UpdateTask extends AsyncTask< Void, Void, Void>
     {
         private String mTaskLocation;
@@ -290,7 +293,7 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
             AppLog.i(TAG, "onPostExecute mTaskLocation : " + mTaskLocation);
 
             if(mTaskLocation == null || mTaskLocation.isEmpty()) {
-                //process empty location
+                //process empty location skip
             }
             else
             {
@@ -313,6 +316,8 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         @Override
         protected Void doInBackground(Void... voids) {
             AppLog.i(TAG, "doInBackground");
+
+            //Process Gps to Address
             NAPI pNAPI = new NAPI();
             mTaskLocation = pNAPI.getAdress(mTaskLongitude, mTaskLatitude);
             AppLog.i(TAG, "mTaskLocation : " + mTaskLocation);
