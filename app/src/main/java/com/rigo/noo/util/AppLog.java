@@ -7,7 +7,7 @@ import android.util.Log;
  */
 
 public class AppLog {
-    private final static boolean mDebug = true;
+    private final static boolean mDebug = false;
     private final static String APPTAG = "NOO_";
 
     public static void i(String aTag, String aMsg) {

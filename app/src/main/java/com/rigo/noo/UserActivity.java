@@ -9,10 +9,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rigo.noo.db.NormalItemDBManager;
 import com.rigo.noo.item.NormalItem;
@@ -68,16 +68,15 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
             return;
         }
 
-        // GPS 프로바이더 사용가능여부
         boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        // 네트워크 프로바이더 사용가능여부
         boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        Log.d(TAG, "isGPSEnabled=" + isGPSEnabled);
-        Log.d(TAG, "isNetworkEnabled=" + isNetworkEnabled);
+        AppLog.d(TAG, "isGPSEnabled=" + isGPSEnabled);
+        AppLog.d(TAG, "isNetworkEnabled=" + isNetworkEnabled);
 
         //Process Need Gps and Mobile State
-
+        if( !isGPSEnabled && !isNetworkEnabled)
+            Toast.makeText(this, R.string.activity_location_gps_network_off, Toast.LENGTH_SHORT).show();
 
 
         locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, this);

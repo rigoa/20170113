@@ -11,4 +11,5 @@
     <string name="button_stop">STOP</string>
     <string name="activity_location_wait">위치정보를 확인 중 입니다...</string>
     <string name="activity_location_reject">위치정보를 사용을 거부하였습니다.</string>
+    <string name="activity_location_gps_network_off">GPS 네트워크 상태를 확인해 주세요.</string>
 </resources>
