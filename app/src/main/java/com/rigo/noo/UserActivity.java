@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -39,11 +40,13 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     //Location
     private double mLatitude;
     private double mLongitude;
+    private String mLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+        mLocation = getResources().getString(R.string.activity_location_wait);
 
         InitLayout();
         InitAdress();
@@ -54,7 +57,7 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     public void InitAdress()
     {
         AppLog.i(TAG, "InitAdress_start");
-        mTvLocation.setText(R.string.activity_location_wait);
+        mTvLocation.setText(mLocation);
 
         LocationManager locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
 
@@ -125,7 +128,7 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         AppLog.i(TAG, "InitLayout mStepValue : " + mStepValue);
 
         mTvStepCount.setText(mStepValue+"");
-        mTvDistance.setText(AppUtil.DistanceFormat( mStepValue, (float)0.6));
+        mTvDistance.setText(AppUtil.DistanceFormat( mStepValue, ApplicationDefine.STEP_METER));
 
     }
 
@@ -133,11 +136,11 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     {
         mStepValue++;
         mTvStepCount.setText(mStepValue+"");
-        mTvDistance.setText( AppUtil.DistanceFormat( mStepValue, (float)0.6) );
+        mTvDistance.setText( AppUtil.DistanceFormat( mStepValue, ApplicationDefine.STEP_METER) );
 
         NormalItem pNormalItem = new NormalItem();
         pNormalItem.setData(mStepValue);
-        pNormalItem.setDistance((float)0.6);
+        pNormalItem.setDistance(ApplicationDefine.STEP_METER);
         NormalItemDBManager.getInstance(getApplicationContext()).addRunItemToDB(pNormalItem);
     }
 
@@ -169,10 +172,10 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         mTvStepCount.setText("0");
 
         //Process Calc Distance
-        mTvDistance.setText(mStepValue*7+"m");
+        mTvDistance.setText( AppUtil.DistanceFormat(mStepValue, ApplicationDefine.STEP_METER) );
 
         NormalItem pNormalItem = new NormalItem();
-        pNormalItem.setDistance((float)0.6);
+        pNormalItem.setDistance(ApplicationDefine.STEP_METER);
         NormalItemDBManager.getInstance(getApplicationContext()).addRunItemToDB(pNormalItem);
         StepSensorManager.getInstance(getApplicationContext()).Start();
 
@@ -222,27 +225,11 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     @Override
     public void onLocationChanged(Location location) {
         AppLog.i(TAG, "onLocationChanged");
-        double nLatitude = location.getLatitude();
-        double nLongitude = location.getLongitude();
-        AppLog.i(TAG, "nLatitude : " + nLatitude);
-        AppLog.i(TAG, "nLongitude : " + nLongitude);
 
-        mLatitude = nLatitude;
-        mLongitude = nLongitude;
-
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                NAPI pNAPI = new NAPI();
-                String pResult = pNAPI.getAdress(mLongitude, mLatitude);
-
-                AppLog.i(TAG, "getAdress : " + pResult);
-                //Process update UI
-                //mTvLocation.setText(result);
-            }
-        }).start();
+        if(location != null)
+            new UpdateTask(location.getLongitude(), location.getLatitude()).execute();
+        else
+            AppLog.d(TAG, "onLocationChanged Location is null");
     }
 
     @Override
@@ -258,5 +245,61 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     @Override
     public void onProviderDisabled(String s) {
 
+    }
+
+    private  class UpdateTask extends AsyncTask< Void, Void, Void>
+    {
+        private String mTaskLocation;
+        private  double mTaskLongitude;
+        private  double mTaskLatitude;
+
+        public UpdateTask(double aLongitude, double aLatitude) {
+            super();
+            mTaskLongitude = aLongitude;
+            mTaskLatitude = aLatitude;
+            AppLog.i(TAG, "mTaskLongitude : " + aLongitude);
+            AppLog.i(TAG, "mTaskLatitude : " + aLatitude);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            AppLog.i(TAG, "onPreExecute");
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            AppLog.i(TAG, "onPostExecute");
+            mTvLocation.setText(mTaskLocation);
+        }
+
+        @Override
+        protected void onCancelled(Void aVoid) {
+            super.onCancelled(aVoid);
+            AppLog.i(TAG, "onCancelled");
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            AppLog.i(TAG, "onCancelled");
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            AppLog.i(TAG, "doInBackground");
+            NAPI pNAPI = new NAPI();
+            mTaskLocation = pNAPI.getAdress(mLongitude, mLatitude);
+            AppLog.i(TAG, "mTaskLocation : " + mTaskLocation);
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            AppLog.i(TAG, "onProgressUpdate");
+
+        }
     }
 }

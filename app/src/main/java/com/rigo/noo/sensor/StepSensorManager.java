@@ -70,7 +70,7 @@ public class StepSensorManager implements SensorEventListener {
     private float lastY;
     private float lastZ;
     private float x, y, z;
-    private static final int SHAKE_THRESHOLD = 100;
+    private static final int SHAKE_THRESHOLD = 200;
 
     private Context mContext;
     private SensorManager mSensorManager;
@@ -85,8 +85,8 @@ public class StepSensorManager implements SensorEventListener {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
             accelerormeterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         else {
-            //accelerormeterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            accelerormeterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+            accelerormeterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            //accelerormeterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         }
 
     }
@@ -131,12 +131,12 @@ public class StepSensorManager implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         // TODO Auto-generated method stub
-        AppLog.i(TAG, "onSensorChanged_start Type : " + event.sensor.getType());
+//        AppLog.i(TAG, "onSensorChanged_start Type : " + event.sensor.getType());
 
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             long currentTime = System.currentTimeMillis();
             long gabOfTime = (currentTime - lastTime);
-            if (gabOfTime > 500) {
+            if (gabOfTime > 300) {
                 lastTime = currentTime;
                 x = event.values[SensorManager.DATA_X];
                 y = event.values[SensorManager.DATA_Y];

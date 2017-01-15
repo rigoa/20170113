@@ -1,11 +1,13 @@
 package com.rigo.noo.service;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,6 +17,8 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 
+import com.rigo.noo.ApplicationDefine;
+import com.rigo.noo.MainActivity;
 import com.rigo.noo.R;
 import com.rigo.noo.db.NormalItemDBManager;
 import com.rigo.noo.item.NormalItem;
@@ -59,7 +63,7 @@ public class MiniService extends Service{
         CheckRunning();
 
         mTvMiniStep.setText(mMiniStep+"");
-        mTvMiniDistance.setText( AppUtil.DistanceFormat( mMiniStep, (float)0.6));
+        mTvMiniDistance.setText( AppUtil.DistanceFormat( mMiniStep, ApplicationDefine.STEP_METER));
 
 
 
@@ -108,11 +112,11 @@ public class MiniService extends Service{
             AppLog.i(TAG, "Inner CallbackFunction");
             mMiniStep++;
             mTvMiniStep.setText(mMiniStep+"");
-            mTvMiniDistance.setText( AppUtil.DistanceFormat( mMiniStep, (float)0.6) );
+            mTvMiniDistance.setText( AppUtil.DistanceFormat( mMiniStep, ApplicationDefine.STEP_METER) );
 
             NormalItem pNormalItem = new NormalItem();
             pNormalItem.setData(mMiniStep);
-            pNormalItem.setDistance((float)0.6);
+            pNormalItem.setDistance(ApplicationDefine.STEP_METER);
             NormalItemDBManager.getInstance(getApplicationContext()).addRunItemToDB(pNormalItem);
         }
     };
@@ -127,7 +131,7 @@ public class MiniService extends Service{
         mStepSensorManager.SetSensorCallback(mSensorCallback);
         StepSensorManager.getInstance(getApplicationContext()).Start();
 
-        startForeground(1, new Notification());
+        startForeground(1,  new Notification());
         //return super.onStartCommand(intent, flags, startId);
         return START_STICKY;
     }
@@ -148,6 +152,8 @@ public class MiniService extends Service{
 
     private View.OnTouchListener mViewTouchListener = new View.OnTouchListener() {
 
+        private long preTiem = 0;
+
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
@@ -160,6 +166,21 @@ public class MiniService extends Service{
                     break;
 
                 case MotionEvent.ACTION_UP:
+                    long curTime = System.currentTimeMillis();
+                    if(curTime - preTiem < 500) {
+                        AppLog.i(TAG, "onDoubleTab");
+                        //preocess double tap
+                        Intent pIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, pIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        try {
+                            contentIntent.send();
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                    preTiem = curTime;
                     break;
 
                 case MotionEvent.ACTION_MOVE:

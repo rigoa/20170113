@@ -43,7 +43,11 @@ public class NAPI {
             }
             br.close();
 
+            AppLog.i(TAG, "response.toString() : " + response.toString());
             JSONObject pJSONObject = new JSONObject(response.toString());
+            AppLog.i(TAG, "result : " + pJSONObject.getString("result"));
+            pJSONObject = new JSONObject(pJSONObject.getString("result"));
+            AppLog.i(TAG, "items : " + pJSONObject.getString("items"));
             JSONArray pJSONArray = new JSONArray(pJSONObject.getString("items"));
             String address = ((JSONObject) pJSONArray.get(0)).getString("address");
 

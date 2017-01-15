@@ -24,8 +24,8 @@ public class MainActivity extends ActivityGroup {
         mTabHost = (TabHost)findViewById(R.id.tabhost);
         mTabHost.setup(getLocalActivityManager());
 
-        mTabHost.addTab( mTabHost.newTabSpec("A").setIndicator("A").setContent(new Intent(this, UserActivity.class)));
-        mTabHost.addTab( mTabHost.newTabSpec("B").setIndicator("B").setContent(new Intent(this, HistoryActivity.class)));
+        mTabHost.addTab( mTabHost.newTabSpec("A").setIndicator(getResources().getString(R.string.activity_name_user)).setContent(new Intent(this, UserActivity.class)));
+        mTabHost.addTab( mTabHost.newTabSpec("B").setIndicator(getResources().getString(R.string.activity_name_history)).setContent(new Intent(this, HistoryActivity.class)));
     }
 
     @Override
