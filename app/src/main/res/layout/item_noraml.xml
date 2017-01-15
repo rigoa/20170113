@@ -41,7 +41,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="5dip"
             android:layout_marginRight="5dip"
-            app:srcCompat="@mipmap/ic_launcher"
+            android:src="@mipmap/walking_192"
             />
 
         <LinearLayout
