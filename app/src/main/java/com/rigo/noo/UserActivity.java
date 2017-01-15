@@ -199,13 +199,18 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     protected void onResume() {
         super.onResume();
         AppLog.i(TAG, "onResume");
-        StartAdress();
 
         //Need Process location permission alert check
         if( MainActivity.GetPermissionState() == ApplicationDefine.MAIN_PERMISSION_DENIED) {
             mLocation = getString(R.string.activity_location_reject);
             mTvLocation.setText(mLocation);
         }
+        else
+        {
+            mLocation = getString(R.string.activity_location_wait);
+            mTvLocation.setText(mLocation);
+        }
+        StartAdress();
     }
 
     @Override

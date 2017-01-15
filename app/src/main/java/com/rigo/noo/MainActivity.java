@@ -60,7 +60,7 @@ public class MainActivity extends ActivityGroup {
         {
             case ApplicationDefine.PERMITION_RESULT_ID_LOCATION: {
                 if( grantResults[ACCESS_FINE_LOCATION_INDEX] ==  PackageManager.PERMISSION_GRANTED
-                        &&  grantResults[ACCESS_COARSE_LOCATION_INDEX] ==  PackageManager.PERMISSION_DENIED ) {
+                        &&  grantResults[ACCESS_COARSE_LOCATION_INDEX] ==  PackageManager.PERMISSION_GRANTED ) {
                     //process PERMISSION_GRANTED
                     AppLog.i(TAG, "onRequestPermissionsResult PERMISSION_GRANTED");
                     mIsPermission = ApplicationDefine.MAIN_PERMISSION_GRANTED;
