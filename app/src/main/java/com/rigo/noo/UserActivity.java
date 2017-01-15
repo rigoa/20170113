@@ -50,12 +50,12 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         mLocation = getResources().getString(R.string.activity_location_wait);
 
         InitLayout();
-        InitAdress();
+        StartAdress();
 
     }
 
 
-    public void InitAdress()
+    public void StartAdress()
     {
         AppLog.i(TAG, "InitAdress_start");
 
@@ -65,12 +65,10 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
                 ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            //requestPermissions();
-
-            mLocation = getString(R.string.activity_location_reject);
-            mTvLocation.setText(mLocation);
+//            mLocation = getString(R.string.activity_location_reject);
+//            mTvLocation.setText(mLocation);
             AppLog.i(TAG, "InitAdress not have permission");
-            return  ;
+            return;
         }
 
         // GPS 프로바이더 사용가능여부
@@ -112,14 +110,14 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     public void UpdateUI() {
         //Process Get Save StepValue
         NormalItem pNormalItem;
-        pNormalItem = NormalItemDBManager.getInstance(getApplicationContext()).getRunItemFromDB();
+        pNormalItem = NormalItemDBManager.getInstance(this).getRunItemFromDB();
         if( pNormalItem != null && pNormalItem.getDistance() > 0 )
         {
             //Current Start
             mBtAction.setTag(1);
             mStepValue = pNormalItem.getData();
             mBtAction.setText(R.string.button_stop);
-            StepSensorManager.getInstance(getApplicationContext()).Start();
+            StepSensorManager.getInstance(this).Start();
         }
         else
         {
@@ -145,7 +143,7 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         NormalItem pNormalItem = new NormalItem();
         pNormalItem.setData(mStepValue);
         pNormalItem.setDistance(ApplicationDefine.STEP_METER);
-        NormalItemDBManager.getInstance(getApplicationContext()).addRunItemToDB(pNormalItem);
+        NormalItemDBManager.getInstance(this).addRunItemToDB(pNormalItem);
     }
 
     public void onActionToStop() {
@@ -154,9 +152,9 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         pNormalItem.setDistance( (float) 0.6 );
         pNormalItem.setData( Integer.parseInt( mTvStepCount.getText().toString()));
 
-        NormalItemDBManager.getInstance(getApplicationContext()).addNormalItemToDB(pNormalItem);
+        NormalItemDBManager.getInstance(this).addNormalItemToDB(pNormalItem);
         pNormalItem = new NormalItem();
-        NormalItemDBManager.getInstance(getApplicationContext()).addRunItemToDB(pNormalItem);
+        NormalItemDBManager.getInstance(this).addRunItemToDB(pNormalItem);
 
         mBtAction.setText(R.string.button_start);
         mBtAction.setTag(0);
@@ -166,7 +164,7 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         //Process Calc Distance
         mTvDistance.setText(mStepValue*7+"m");
 
-        StepSensorManager.getInstance(getApplicationContext()).Stop();
+        StepSensorManager.getInstance(this).Stop();
 
     }
 
@@ -180,8 +178,8 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
 
         NormalItem pNormalItem = new NormalItem();
         pNormalItem.setDistance((float)0.6);
-        NormalItemDBManager.getInstance(getApplicationContext()).addRunItemToDB(pNormalItem);
-        StepSensorManager.getInstance(getApplicationContext()).Start();
+        NormalItemDBManager.getInstance(this).addRunItemToDB(pNormalItem);
+        StepSensorManager.getInstance(this).Start();
 
     }
 
@@ -202,22 +200,14 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
     protected void onResume() {
         super.onResume();
         AppLog.i(TAG, "onResume");
-        mPermisionLocation = getIntent().getIntExtra(ApplicationDefine.PERMITION_INTENT_ID_LOCATION, PackageManager.PERMISSION_DENIED);
-        if( mPermisionLocation == PackageManager.PERMISSION_GRANTED) {
-            AppLog.i(TAG, "onResume Location PERMISSION_GRANTED");
-            InitAdress();
-        }
-        else{
-            AppLog.i(TAG, "onResume Location PERMISSION_DENIED");
-        }
-
+        StartAdress();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         AppLog.i(TAG, "onStart");
-        StepSensorManager.getInstance(getApplicationContext()).SetSensorCallback(this);
+        StepSensorManager.getInstance(this).SetSensorCallback(this);
         UpdateUI();
     }
 
@@ -232,6 +222,11 @@ public class UserActivity extends Activity implements StepSensorManager.SensorCa
         super.onStop();
         AppLog.i(TAG, "onStop");
 
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     //Location Process

@@ -72,6 +72,6 @@ public class NormalItem implements Comparable<NormalItem>{
     public int compareTo(NormalItem another) {
         // TODO Auto-generated method stub
 
-        return 0;
+        return this.getStartTime().compareTo( another.getStartTime());
     }
 }

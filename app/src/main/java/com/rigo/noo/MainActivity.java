@@ -1,6 +1,5 @@
 package com.rigo.noo;
 
-import android.Manifest;
 import android.app.ActivityGroup;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,7 +15,6 @@ import com.rigo.noo.sensor.StepSensorManager;
 import com.rigo.noo.service.MiniService;
 import com.rigo.noo.util.AppLog;
 
-import java.util.ArrayList;
 
 public class MainActivity extends ActivityGroup {
 
@@ -37,7 +35,9 @@ public class MainActivity extends ActivityGroup {
 
         mTabHost.addTab( mTabHost.newTabSpec("A").setIndicator(getResources().getString(R.string.activity_name_user)).setContent(new Intent(this, UserActivity.class)));
         mTabHost.addTab( mTabHost.newTabSpec("B").setIndicator(getResources().getString(R.string.activity_name_history)).setContent(new Intent(this, HistoryActivity.class)));
+    }
 
+    public  void getLocationPermition() {
         if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -46,7 +46,6 @@ public class MainActivity extends ActivityGroup {
             String [] pRequired= new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION};
             ActivityCompat.requestPermissions(this, pRequired, ApplicationDefine.PERMITION_RESULT_ID_LOCATION);
         }
-
     }
 
     @Override
@@ -56,14 +55,11 @@ public class MainActivity extends ActivityGroup {
         switch (requestCode)
         {
             case ApplicationDefine.PERMITION_RESULT_ID_LOCATION: {
-                Intent pIntent = new Intent(this, UserActivity.class);
+                AppLog.i(TAG, "onRequestPermissionsResult PERMISSION_GRANTED");
 
                 if( grantResults[ACCESS_FINE_LOCATION_INDEX] ==  PackageManager.PERMISSION_GRANTED
                         &&  grantResults[ACCESS_COARSE_LOCATION_INDEX] ==  PackageManager.PERMISSION_GRANTED ) {
-
                     //process PERMISSION_GRANTED
-                    pIntent.putExtra(ApplicationDefine.PERMITION_INTENT_ID_LOCATION, PackageManager.PERMISSION_GRANTED);
-                    startActivity(pIntent);
 
                 }
                 else {
@@ -80,10 +76,10 @@ public class MainActivity extends ActivityGroup {
     @Override
     protected void onPause() {
         super.onPause();
-        StepSensorManager.getInstance(getApplicationContext()).UnsetSensorCallback(null);
+        StepSensorManager.getInstance(this).UnsetSensorCallback(null);
 
         NormalItem pNormalItem;
-        pNormalItem = NormalItemDBManager.getInstance(getApplicationContext()).getRunItemFromDB();
+        pNormalItem = NormalItemDBManager.getInstance(this).getRunItemFromDB();
         if( pNormalItem != null && pNormalItem.getDistance() > 0 ) {
             startService(new Intent(this, MiniService.class));
         }
@@ -93,6 +89,7 @@ public class MainActivity extends ActivityGroup {
     protected void onResume() {
         stopService(new Intent(this, MiniService.class));
         super.onResume();
+        getLocationPermition();
 
     }
 }

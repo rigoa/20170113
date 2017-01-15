@@ -31,6 +31,12 @@
             android:enabled="true" >
         </service>
 
+        <provider
+            android:authorities="com.rigo.noo.provider"
+            android:name=".provider.NooProvider"
+            android:exported="true"
+            />
+
 
     </application>
 

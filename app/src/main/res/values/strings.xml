@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">noo</string>
+    <string name="app_provider_read_permition">read_permition</string>
+
+
     <string name="activity_name_user">만보기 화면</string>
     <string name="activity_name_history">만보기 기록</string>
 

@@ -87,19 +87,21 @@ public class NormalItemDBAPI {
     }
 
     public void getAllItem(ArrayList<NormalItem> aListItem) {
+        AppLog.i(TAG, "getAllItem");
         Cursor cursor = null;
         NormalItem ptItem = null;
         try{
             cursor = mSQLiteDatabase.rawQuery("SELECT * FROM "
                     + NormalItemDBInfo.ITEM_NORMAL_DB_TABLE_NAME, null);
 
+            AppLog.i(TAG, "cursor.getCount() : " + cursor.getCount());
+
             while (cursor.moveToNext()){
                 ptItem = new NormalItem();
-                if(cursor.moveToFirst()){
-                    ptItem.setStartTime( cursor.getString(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_STARTTIME));
-                    ptItem.setDistance( cursor.getFloat(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_DISTANCE) );
-                    ptItem.setData( cursor.getLong(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_DATA) );
-                }
+                ptItem.setID( cursor.getInt(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_PKEY));
+                ptItem.setStartTime( cursor.getString(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_STARTTIME));
+                ptItem.setDistance( cursor.getFloat(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_DISTANCE) );
+                ptItem.setData( cursor.getLong(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_DATA) );
 
                 aListItem.add(ptItem);
             }
@@ -210,18 +212,13 @@ public class NormalItemDBAPI {
             cursor = mSQLiteDatabase.rawQuery("SELECT * FROM "
                     + NormalItemDBInfo.ITEM_RUN_DB_TABLE_NAME, null);
 
-            if (cursor.moveToNext()){
-                ptItem = new NormalItem();
-                if(cursor.moveToFirst()){
-                    ptItem.setStartTime( cursor.getString(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_STARTTIME));
-                    ptItem.setDistance( cursor.getFloat(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_DISTANCE) );
-                    ptItem.setData( cursor.getLong(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_DATA) );
-                }
-                AppLog.i(TAG, "getRunItem data: " + ptItem.getData());
+            ptItem = new NormalItem();
+            if(cursor.moveToFirst()){
+                ptItem.setStartTime( cursor.getString(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_STARTTIME));
+                ptItem.setDistance( cursor.getFloat(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_DISTANCE) );
+                ptItem.setData( cursor.getLong(NormalItemDBInfo.ITEM_NORMAL_DB_FIELD_INDEX_DATA) );
             }
-
-
-
+            AppLog.i(TAG, "getRunItem data: " + ptItem.getData());
         }
         catch(Exception e){
             e.printStackTrace();

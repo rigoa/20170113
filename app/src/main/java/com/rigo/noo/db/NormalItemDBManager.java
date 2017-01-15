@@ -3,6 +3,7 @@ package com.rigo.noo.db;
 import android.content.Context;
 
 import com.rigo.noo.item.NormalItem;
+import com.rigo.noo.util.AppLog;
 
 import java.util.ArrayList;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
  */
 
 public class NormalItemDBManager {
+    private static String TAG = NormalItemDBManager.class.getSimpleName();
 
     private volatile static NormalItemDBManager mNormalItemDBManager	= null;
     private NormalItemDBAPI mNormalItemDBAPI = null;
@@ -40,6 +42,7 @@ public class NormalItemDBManager {
 
     public void getAllNormalItem( ArrayList<NormalItem> aListItem)
     {
+        AppLog.i(TAG, "makeItemList");
         mNormalItemDBAPI.getAllItem(aListItem);
     }
 
